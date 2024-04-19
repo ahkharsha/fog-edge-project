@@ -11,10 +11,10 @@ import 'package:pregathi/const/constants.dart';
 import 'package:pregathi/db/db_services.dart';
 import 'package:pregathi/model/contacts.dart';
 import 'package:pregathi/model/emergency_message.dart';
-import 'package:pregathi/navigators.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_sms/background_sms.dart';
+import 'package:pregathi/widgets/home/insta_share/wife_emergency_alert.dart';
 
 class InstaShareBottomSheet extends StatefulWidget {
   const InstaShareBottomSheet({super.key});
@@ -28,6 +28,9 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
           databaseURL:
               "https://pregathi-69-default-rtdb.asia-southeast1.firebasedatabase.app")
       .ref('sensors');
+  late String bpm;
+  late String sValue;
+  bool isEmergency = false;
   final User? user = FirebaseAuth.instance.currentUser;
   Position? _currentPosition;
   String? _currentAddress;
@@ -192,6 +195,58 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
     }
   }
 
+  sendAlert() async {
+    {
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          Fluttertoast.showToast(msg: 'Location permissions are denied');
+          return false;
+        }
+        if (permission == LocationPermission.deniedForever) {
+          Fluttertoast.showToast(
+              msg: 'Location permissions are permanently denied..');
+          return false;
+        }
+        return true;
+      }
+
+      List<TContact> contactList = await DatabaseService().getContactList();
+
+      String msgBody =
+          "https://www.google.com/maps/search/?api=1&query=${_currentLat}%2C${_currentLong}. $_currentAddress";
+      String firebaseMsg =
+          "https://www.google.com/maps/search/?api=1&query=${_currentLat}%2C${_currentLong}";
+
+      setFirebaseEmergency(firebaseMsg);
+
+      if (await isPermissionGranted()) {
+        for (TContact contact in contactList) {
+          sendSMS(
+            contact.number,
+            "Having inconvenience, so reach please out at $msgBody",
+          );
+        }
+        sendSMS(
+          husbandPhoneNumber,
+          "Having inconvenience, so reach please out at $msgBody",
+        );
+        sendSMSwithAlert(
+          hospitalPhoneNumber,
+          "Having inconvenience, so reach please out at $msgBody",
+        );
+      }
+
+      // else {
+      //   Fluttertoast.showToast(msg: "Something is wrong..");
+      // }
+    }
+    // else {
+    //   Fluttertoast.showToast(msg: "Location not available..");
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -216,85 +271,65 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
             const SizedBox(
               height: 10,
             ),
-            _currentAddress != null
-                ? Text(
-                    _currentAddress!,
-                    textAlign: TextAlign.center,
-                  )
-                : smallProgressIndicator(context),
+            const Text(
+              "Live Data:",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 20),
+            ),
             Container(
-              height: MediaQuery.of(context).size.height / 11,
+              height: MediaQuery.of(context).size.height / 14,
               child: FirebaseAnimatedList(
                 query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
+                  bpm = snapshot.child('BPM').value.toString();
+                  sValue = snapshot.child('Svalue').value.toString();
+                  if (int.tryParse(bpm)! > 90) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WifeEmergencyScreen()));
+                    sendAlert();
+                  }
                   return Column(
                     children: [
-                      Text('BPM: ${snapshot.child('BPM').value.toString()}'),
                       Text(
-                          'S-Value: ${snapshot.child('Svalue').value.toString()}'),
+                        'BPM: $bpm',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'S-Value: $sValue',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   );
                 },
               ),
             ),
+            _currentAddress != null
+                ? Text(
+                    'Address: $_currentAddress',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  )
+                : smallProgressIndicator(context),
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: MainButton(
                 title: "Send Alert",
                 onPressed: () async {
-                  {
-                    navigateToWifeEmergency(context);
-                    permission = await Geolocator.checkPermission();
-                    if (permission == LocationPermission.denied) {
-                      permission = await Geolocator.requestPermission();
-                      if (permission == LocationPermission.denied) {
-                        Fluttertoast.showToast(
-                            msg: 'Location permissions are denied');
-                        return false;
-                      }
-                      if (permission == LocationPermission.deniedForever) {
-                        Fluttertoast.showToast(
-                            msg:
-                                'Location permissions are permanently denied..');
-                        return false;
-                      }
-                      return true;
-                    }
-
-                    List<TContact> contactList =
-                        await DatabaseService().getContactList();
-
-                    String msgBody =
-                        "https://www.google.com/maps/search/?api=1&query=${_currentLat}%2C${_currentLong}. $_currentAddress";
-                    String firebaseMsg =
-                        "https://www.google.com/maps/search/?api=1&query=${_currentLat}%2C${_currentLong}";
-
-                    setFirebaseEmergency(firebaseMsg);
-
-                    if (await isPermissionGranted()) {
-                      for (TContact contact in contactList) {
-                        sendSMS(
-                          contact.number,
-                          "Having inconvenience, so reach please out at $msgBody",
-                        );
-                      }
-                      sendSMS(
-                        husbandPhoneNumber,
-                        "Having inconvenience, so reach please out at $msgBody",
-                      );
-                      sendSMSwithAlert(
-                        hospitalPhoneNumber,
-                        "Having inconvenience, so reach please out at $msgBody",
-                      );
-                    }
-
-                    // else {
-                    //   Fluttertoast.showToast(msg: "Something is wrong..");
-                    // }
-                  }
-                  // else {
-                  //   Fluttertoast.showToast(msg: "Location not available..");
-                  // }
+                  await sendAlert();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => WifeEmergencyScreen()));
                 },
               ),
             ),
