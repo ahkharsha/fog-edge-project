@@ -10,7 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:pregathi/bottom-sheet/insta_share_bottom_sheet.dart';
+import 'package:pregathi/bottom-sheet/insta_share_no_alert.dart';
 import 'package:pregathi/const/constants.dart';
 import 'package:pregathi/db/shared_pref.dart';
 import 'package:pregathi/main-screens/drawers/wife/profile_drawer.dart';
@@ -399,7 +399,7 @@ class _WifeHomeScreenState extends ConsumerState<WifeHomeScreen> {
             showModalBottomSheet<void>(
               context: context,
               builder: (BuildContext context) {
-                return InstaShareBottomSheet();
+                return InstaShareNoAlert();
               },
             );
           },
