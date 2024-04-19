@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:pregathi/community-chat/community_home.dart';
 import 'package:pregathi/const/constants.dart';
 import 'package:pregathi/main-screens/home-screen/wife_home_screen.dart';
-import 'package:pregathi/widgets/home/bottom-bar/chat_screen.dart';
 import 'package:pregathi/widgets/home/bottom-bar/contacts/contacts_screen.dart';
+import 'package:pregathi/widgets/home/bottom-bar/health_profile.dart';
 import 'package:pregathi/widgets/home/bottom-bar/profile_screen.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar.dart';
 import 'package:curved_labeled_navigation_bar/curved_navigation_bar_item.dart';
@@ -28,12 +27,12 @@ class _BottomPageState extends State<BottomPage> {
   void initState() {
     super.initState();
     uid = FirebaseAuth.instance.currentUser!.uid;
-    currentIndex = 0;
+    currentIndex = 2;
     pages = [
-      WifeHomeScreen(),
       ContactsScreen(),
       CommunityHome(),
-      ChatScreen(),
+      WifeHomeScreen(),
+      HealthProfileScreen(),
       WifeProfileScreen(),
     ];
   }
@@ -85,16 +84,16 @@ class _BottomPageState extends State<BottomPage> {
           index: currentIndex,
           items: const [
             CurvedNavigationBarItem(
-              child: Icon(Icons.home, color: Colors.white),
-            ),
-            CurvedNavigationBarItem(
               child: Icon(Icons.contacts, color: Colors.white),
             ),
             CurvedNavigationBarItem(
               child: Icon(Icons.groups, color: Colors.white),
             ),
             CurvedNavigationBarItem(
-              child: Icon(Icons.mark_chat_unread_rounded, color: Colors.white),
+              child: Icon(Icons.home, color: Colors.white),
+            ),
+            CurvedNavigationBarItem(
+              child: Icon(Icons.monitor_heart_rounded, color: Colors.white),
             ),
             CurvedNavigationBarItem(
               child: Icon(Icons.person, color: Colors.white),

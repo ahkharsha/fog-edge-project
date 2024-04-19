@@ -280,14 +280,12 @@ class _WifeProfileScreenState extends State<WifeProfileScreen> {
         isSaving = true;
       });
 
-      // Update profile picture if it's changed
       String? downloadUrl;
       if (newProfilePic != null) {
         print(newProfilePic);
         downloadUrl = await _uploadImage(newProfilePic!);
       }
 
-      // Update other profile information
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user!.uid)

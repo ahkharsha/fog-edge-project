@@ -30,7 +30,6 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
       .ref('sensors');
   late String bpm;
   late String sValue;
-  bool isEmergency = false;
   final User? user = FirebaseAuth.instance.currentUser;
   Position? _currentPosition;
   String? _currentAddress;
