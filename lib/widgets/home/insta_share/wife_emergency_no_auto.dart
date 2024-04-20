@@ -4,21 +4,19 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pregathi/buttons/sub_button.dart';
 import 'package:http/http.dart' as http;
 import 'package:pregathi/const/constants.dart';
 
-class WifeEmergencyScreen extends StatefulWidget {
-  final String husbandPhoneNumber;
-  WifeEmergencyScreen({super.key, required this.husbandPhoneNumber});
+class WifeEmergencyNoAuto extends StatefulWidget {
+  WifeEmergencyNoAuto({super.key});
 
   @override
-  State<WifeEmergencyScreen> createState() => _WifeEmergencyScreenState();
+  State<WifeEmergencyNoAuto> createState() => _WifeEmergencyNoAutoState();
 }
 
-class _WifeEmergencyScreenState extends State<WifeEmergencyScreen> {
+class _WifeEmergencyNoAutoState extends State<WifeEmergencyNoAuto> {
   late DocumentReference _documentReference;
   final User? user = FirebaseAuth.instance.currentUser;
   final player = AudioPlayer();
@@ -83,13 +81,6 @@ class _WifeEmergencyScreenState extends State<WifeEmergencyScreen> {
     super.initState();
     _sendVolunteerNotification();
     _playEmergencySound();
-    _callHusband();
-  }
-
-  _callHusband() {
-    Future.delayed(const Duration(seconds: 3), () {
-      FlutterPhoneDirectCaller.callNumber(widget.husbandPhoneNumber);
-    });
   }
 
   @override

@@ -49,7 +49,8 @@ RouteMap buildRoutes(BuildContext context) {
       '/': (info) => _buildPage(info, context),
       '/register': (_) => const MaterialPage(child: RegisterSelectScreen()),
       '/register-wife': (_) => MaterialPage(child: WifeRegisterScreen()),
-      '/register-volunteer': (_) => MaterialPage(child: VolunteerRegisterScreen()),
+      '/register-volunteer': (_) =>
+          MaterialPage(child: VolunteerRegisterScreen()),
       '/forgot-pwd': (_) => MaterialPage(child: ForgotPasswordScreen()),
       '/wife-verify': (_) => const MaterialPage(child: WifeEmailVerify()),
       '/volunteer-verify': (_) =>
@@ -167,9 +168,15 @@ RouteMap buildRoutes(BuildContext context) {
       '/about-us': (_) => MaterialPage(child: AboutUsScreen()),
       '/options': (_) => MaterialPage(child: OptionsScreen()),
       '/privacy-policy': (_) => MaterialPage(child: PrivacyPolicyScreen()),
-      '/wife-emergency': (_) => MaterialPage(child: WifeEmergencyScreen()),
+      '/wife-emergency/:husbandPhone': (routeData) {
+        final husbandPhone = routeData.pathParameters['husbandPhone']!;
+        return MaterialPage(
+          child: WifeEmergencyScreen(husbandPhoneNumber: husbandPhone),
+        );
+      },
       '/wife-profile': (_) => MaterialPage(child: WifeProfileScreen()),
-      '/volunteer-profile': (_) => MaterialPage(child: VolunteerProfileScreen()),
+      '/volunteer-profile': (_) =>
+          MaterialPage(child: VolunteerProfileScreen()),
       '/help': (_) => MaterialPage(child: HelpScreen()),
     },
   );

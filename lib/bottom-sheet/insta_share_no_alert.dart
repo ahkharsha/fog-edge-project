@@ -14,7 +14,7 @@ import 'package:pregathi/model/emergency_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_sms/background_sms.dart';
-import 'package:pregathi/widgets/home/insta_share/wife_emergency_alert.dart';
+import 'package:pregathi/widgets/home/insta_share/wife_emergency_no_auto.dart';
 
 class InstaShareNoAlert extends StatefulWidget {
   const InstaShareNoAlert({super.key});
@@ -321,7 +321,7 @@ class _InstaShareNoAlertState extends State<InstaShareNoAlert> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WifeEmergencyScreen()));
+                          builder: (context) => WifeEmergencyNoAuto()));
                 },
               ),
             ),

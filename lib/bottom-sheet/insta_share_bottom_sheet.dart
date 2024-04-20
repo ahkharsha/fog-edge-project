@@ -1,7 +1,6 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -287,11 +286,7 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => WifeEmergencyScreen()));
-                    Future.delayed(const Duration(seconds: 3), () {
-                      FlutterPhoneDirectCaller.callNumber(husbandPhoneNumber);
-                    });
-                    
+                            builder: (context) => WifeEmergencyScreen(husbandPhoneNumber: husbandPhoneNumber)));
                     sendAlert();
                   }
                   return Column(
@@ -330,13 +325,10 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                 title: "Send Alert",
                 onPressed: () async {
                   await sendAlert();
-                  await Navigator.push(
+                  Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WifeEmergencyScreen()));
-                          Future.delayed(const Duration(seconds: 3), () {
-                      FlutterPhoneDirectCaller.callNumber(husbandPhoneNumber);
-                    });
+                          builder: (context) => WifeEmergencyScreen(husbandPhoneNumber: husbandPhoneNumber)));
                 },
               ),
             ),
