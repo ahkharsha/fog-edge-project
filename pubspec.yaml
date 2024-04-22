@@ -74,6 +74,7 @@ dependencies:
   video_player: ^2.8.2
   chewie: ^1.2.3
   firebase_database: ^10.4.9
+  tflite_flutter: ^0.10.4
 
 dev_dependencies:
   flutter_test:

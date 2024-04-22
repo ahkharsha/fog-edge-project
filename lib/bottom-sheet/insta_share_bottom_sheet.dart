@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_sms/background_sms.dart';
 import 'package:pregathi/widgets/home/insta_share/wife_emergency_alert.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 class InstaShareBottomSheet extends StatefulWidget {
   const InstaShareBottomSheet({super.key});
@@ -24,6 +25,7 @@ class InstaShareBottomSheet extends StatefulWidget {
 }
 
 class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
+  late String predValue = 'Predicting...';
   final ref = FirebaseDatabase(
           databaseURL:
               "https://pregathi-69-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -48,6 +50,21 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
     _getCurrentLocation();
     loadData();
     setWifeLocation();
+    predData();
+  }
+
+  Future<void> predData() async {
+    final interpreter =
+        await Interpreter.fromAsset('predtest.h5');
+    var input = [
+      [24, 24, 24, 0.67, 0.34, 95]
+    ];
+    var output = List.filled(1, 0).reshape([1, 1]);
+    interpreter.run(input, output);
+    print(output[0][0]);
+    setState(() {
+      predValue = (output[0][0]*4).toString();
+    });
   }
 
   setWifeLocation() {
@@ -276,7 +293,7 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
               style: TextStyle(fontSize: 20),
             ),
             Container(
-              height: MediaQuery.of(context).size.height / 14,
+              height: MediaQuery.of(context).size.height / 12,
               child: FirebaseAnimatedList(
                 query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
@@ -286,7 +303,8 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => WifeEmergencyScreen(husbandPhoneNumber: husbandPhoneNumber)));
+                            builder: (context) => WifeEmergencyScreen(
+                                husbandPhoneNumber: husbandPhoneNumber)));
                     sendAlert();
                   }
                   return Column(
@@ -307,6 +325,31 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
+                      Text(
+                        'Pred Value: $predValue',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      predValue == '1'
+                          ? Text(
+                              'Status: Possible Emergency!!!',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )
+                          : Text(
+                              'Status: Safe',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ],
                   );
                 },
@@ -328,7 +371,8 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => WifeEmergencyScreen(husbandPhoneNumber: husbandPhoneNumber)));
+                          builder: (context) => WifeEmergencyScreen(
+                              husbandPhoneNumber: husbandPhoneNumber)));
                 },
               ),
             ),

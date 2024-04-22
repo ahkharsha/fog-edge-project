@@ -7,6 +7,7 @@ import 'package:pregathi/bottom-sheet/insta_share_bottom_sheet.dart';
 import 'package:pregathi/const/constants.dart';
 import 'package:pregathi/navigators.dart';
 import 'package:sizer/sizer.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
 
 class HealthProfileScreen extends StatefulWidget {
   const HealthProfileScreen({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class HealthProfileScreen extends StatefulWidget {
 }
 
 class _HealthProfileScreenState extends State<HealthProfileScreen> {
+  String predValue='Predicting...';
   final ref = FirebaseDatabase(
           databaseURL:
               "https://pregathi-69-default-rtdb.asia-southeast1.firebasedatabase.app")
@@ -37,6 +39,27 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
   void initState() {
     super.initState();
     loadData();
+    predData();
+  }
+
+  Future<void> predData() async {
+    print('Execution starting...');
+    await runPrediction();
+    print('Execution complete...');
+  }
+
+  runPrediction() async {
+    final interpreter =
+        await Interpreter.fromAsset('labour_pain_prediction_model.tflite');
+    var input = [
+      [24, 24, 24, 0.67, 0.34, 95]
+    ];
+    var output = List.filled(1, 0).reshape([1, 1]);
+    interpreter.run(input, output);
+     print(output[0][0]);
+    setState(() {
+      predValue = output[0][0].toString();
+    });
   }
 
   Future<void> loadData() async {
@@ -118,33 +141,7 @@ class _HealthProfileScreenState extends State<HealthProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    TextFormField(
-                      controller: _ageController,
-                      decoration: InputDecoration(labelText: 'Age'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: _gestationalAgeController,
-                      decoration: InputDecoration(labelText: 'Gestational Age (In weeks)'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: _bmiController,
-                      decoration: InputDecoration(labelText: 'BMI'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: _sympatheticCamController,
-                      decoration: InputDecoration(
-                          labelText: 'Sympathetic CAM (LF Form)'),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextFormField(
-                      controller: _parasympatheticCamController,
-                      decoration: InputDecoration(
-                          labelText: 'Parasympathetic CAM (HF Form)'),
-                      keyboardType: TextInputType.number,
-                    ),
+                    Text('Pred Value: $predValue'),
                   ],
                 ),
               ),
