@@ -325,31 +325,6 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(
-                        'Pred Value: $predValue',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      predValue == '1'
-                          ? Text(
-                              'Status: Possible Emergency!!!',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )
-                          : Text(
-                              'Status: Safe',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                     ],
                   );
                 },

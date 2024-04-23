@@ -30,6 +30,7 @@ const musicImageDefault = 'https://media.wired.com/photos/5926df59f3e2356fd800ab
 
 // Disha's
 Color primaryColor = Color.fromARGB(255, 174, 110, 165);
+Color buttonColor = Color.fromARGB(255, 235, 161, 225);
 // Color textColor = Color.fromARGB(255, 174, 110, 165);
 
 // Harsha's

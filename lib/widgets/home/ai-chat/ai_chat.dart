@@ -17,7 +17,7 @@ class AIChat extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
         ),
         child: InkWell(
-          onTap: () => goBack(context),
+          onTap: () => navigateToAIChat(context),
           child: Container(
             height: MediaQuery.of(context).size.height*0.25,
             width: MediaQuery.of(context).size.width * 0.7,

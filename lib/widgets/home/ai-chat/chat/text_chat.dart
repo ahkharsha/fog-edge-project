@@ -77,7 +77,7 @@ class _TextChatState extends State<TextChat> {
               return ListTile(
                 isThreeLine: true,
                 leading: CircleAvatar(
-                  child: Text(textChat[index]["avatar"].substring(0,2)),
+                  child: Text(textChat[index]["avatar"].substring(0, 2)),
                 ),
                 title: Text(textChat[index]["role"]),
                 subtitle: Text(textChat[index]["text"]),
@@ -112,9 +112,16 @@ class _TextChatState extends State<TextChat> {
               IconButton(
                 icon: loading
                     ? const CircularProgressIndicator()
-                    : const Icon(Icons.send, color: Color.fromARGB(255, 93, 11, 82),),
+                    : const Icon(
+                        Icons.send,
+                        color: Color.fromARGB(255, 93, 11, 82),
+                      ),
                 onPressed: () {
-                  fromText(prompt: "Consider yourself an AI doctor. I am a pregnant lady, only answer question related to pregnancy. if the question by me is not related to pregnacy, politely say you don't know the answers for questions which are not related to pregnancy, and request them to ask something related to pregnancy. Make sure you are always polite, patient, gentle and understanding of me. Always speak with care, similar to how you are actually supposed to speak to a pregnant lady. Ask me follow up questions if you need more info about me. Talk to me in a friendly manner. Please don't repeat my question while answering it. Answer my questions in under 45 words. Don't highlight your answers in bold or asterisk. My question is as follows:", query: _textController.text);
+                  fromText(
+                    prompt:
+                        "Consider yourself an AI doctor. You are qualified to give medical advices related to pregnancy, maternal health and all the questions related to it. I am a pregnant lady, only answer question related to pregnancy. if the question by me is not related to pregnacy, politely say you don't know the answers for questions which are not related to pregnancy, and request them to ask something related to pregnancy. Make sure you are always polite, patient, gentle and understanding of me. Always speak with care, similar to how you are actually supposed to speak to a pregnant lady. Do not assume any information about me. Ask me every single thing, and then asnwer the query based on what input I give. Ask me follow up questions if you need more info about me. Talk to me in a friendly manner. Please don't repeat my question while answering it. Answer my questions in under 45 words. Don't highlight your answers in bold or asterisk. My question is as follows:",
+                    query: _textController.text,
+                  );
                 },
               ),
             ],
