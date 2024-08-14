@@ -15,6 +15,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:background_sms/background_sms.dart';
 import 'package:pregathi/widgets/home/insta_share/wife_emergency_no_auto.dart';
+import 'dart:async';
 
 class InstaShareNoAlert extends StatefulWidget {
   const InstaShareNoAlert({super.key});
@@ -40,6 +41,7 @@ class _InstaShareNoAlertState extends State<InstaShareNoAlert> {
   LocationPermission? permission;
   late String husbandPhoneNumber;
   late String hospitalPhoneNumber;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -48,6 +50,22 @@ class _InstaShareNoAlertState extends State<InstaShareNoAlert> {
     _getCurrentLocation();
     loadData();
     setWifeLocation();
+    _startDataUpdateTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startDataUpdateTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        bpm = (60 + (40 * timer.tick) % 80).toString(); // Simulating BPM
+        sValue = (80 + (20 * timer.tick) % 40).toString(); // Simulating S-Value
+      });
+    });
   }
 
   setWifeLocation() {
@@ -236,14 +254,7 @@ class _InstaShareNoAlertState extends State<InstaShareNoAlert> {
           "Having inconvenience, so reach please out at $msgBody",
         );
       }
-
-      // else {
-      //   Fluttertoast.showToast(msg: "Something is wrong..");
-      // }
     }
-    // else {
-    //   Fluttertoast.showToast(msg: "Location not available..");
-    // }
   }
 
   @override
@@ -280,8 +291,6 @@ class _InstaShareNoAlertState extends State<InstaShareNoAlert> {
               child: FirebaseAnimatedList(
                 query: ref,
                 itemBuilder: (context, snapshot, animation, index) {
-                  bpm = snapshot.child('BPM').value.toString();
-                  sValue = snapshot.child('Svalue').value.toString();
                   return Column(
                     children: [
                       Text(

@@ -1,5 +1,7 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_database/ui/firebase_animated_list.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
@@ -43,6 +45,9 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
   late String husbandPhoneNumber;
   late String hospitalPhoneNumber;
 
+  Timer? _timer;
+  Random random = Random();
+
   @override
   void initState() {
     super.initState();
@@ -51,6 +56,31 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
     loadData();
     setWifeLocation();
     predData();
+    _startRandomDataGenerator();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startRandomDataGenerator() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        bpm = (60 + random.nextInt(40)).toString(); // Random BPM between 60 and 100
+        sValue = (90 + random.nextInt(10)).toString(); // Random S-value between 90 and 100
+      });
+
+      if (int.tryParse(bpm)! > 90) {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    WifeEmergencyScreen(husbandPhoneNumber: husbandPhoneNumber)));
+        sendAlert();
+      }
+    });
   }
 
   Future<void> predData() async {
@@ -63,7 +93,7 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
     interpreter.run(input, output);
     print(output[0][0]);
     setState(() {
-      predValue = (output[0][0]*4).toString();
+      predValue = (output[0][0] * 4).toString();
     });
   }
 
@@ -253,14 +283,7 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
           "Having inconvenience, so reach please out at $msgBody",
         );
       }
-
-      // else {
-      //   Fluttertoast.showToast(msg: "Something is wrong..");
-      // }
     }
-    // else {
-    //   Fluttertoast.showToast(msg: "Location not available..");
-    // }
   }
 
   @override
@@ -294,40 +317,25 @@ class _InstaShareBottomSheetState extends State<InstaShareBottomSheet> {
             ),
             Container(
               height: MediaQuery.of(context).size.height / 12,
-              child: FirebaseAnimatedList(
-                query: ref,
-                itemBuilder: (context, snapshot, animation, index) {
-                  bpm = snapshot.child('BPM').value.toString();
-                  sValue = snapshot.child('Svalue').value.toString();
-                  if (int.tryParse(bpm)! > 90) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WifeEmergencyScreen(
-                                husbandPhoneNumber: husbandPhoneNumber)));
-                    sendAlert();
-                  }
-                  return Column(
-                    children: [
-                      Text(
-                        'BPM: $bpm',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        'S-Value: $sValue',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  );
-                },
+              child: Column(
+                children: [
+                  Text(
+                    'BPM: $bpm',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    'S-Value: $sValue',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
             _currentAddress != null
